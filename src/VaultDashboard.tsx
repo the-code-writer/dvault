@@ -18,7 +18,8 @@ import {
   Divider,
   Tag,
   Modal,
-  Input
+  Input,
+  Flex
 } from 'antd';
 import { 
   WalletOutlined, 
@@ -29,6 +30,11 @@ import {
   LogoutOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons';
+import { ActionButtonList } from './components/ActionButtonList';
+import { SmartContractActionButtonList } from './components/SmartContractActionButtonList';
+import { InfoList } from './components/InfoList';
+import { useAppKitAccount } from '@reown/appkit/react';
+import vault from "./assets/vault.png"
 
 const { Header, Content } = Layout;
 const { TabPane } = Tabs;
@@ -54,7 +60,26 @@ interface AccountInfo {
 }
 
 const VaultDashboard: React.FC = () => {
-  const [connected, setConnected] = useState<boolean>(false);
+
+  const [transactionHash, setTransactionHash] = useState<
+    `0x${string}` | undefined
+  >(undefined);
+  const [signedMsg, setSignedMsg] = useState("");
+  const [balance, setBalance] = useState("");
+
+  const receiveHash = (hash: `0x${string}`) => {
+    setTransactionHash(hash); // Update the state with the transaction hash
+  };
+
+  const receiveSignedMsg = (signedMsg: string) => {
+    setSignedMsg(signedMsg); // Update the state with the transaction hash
+  };
+
+  const receivebalance = (balance: string) => {
+    setBalance(balance);
+  };
+  const { address, caipAddress, isConnected, status, embeddedWalletInfo } = useAppKitAccount(); 
+
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [depositAmount, setDepositAmount] = useState<number>(0);
@@ -106,10 +131,10 @@ const VaultDashboard: React.FC = () => {
     // Check if MetaMask is installed
     setIsMetamaskInstalled(typeof window.ethereum !== 'undefined');
     
-    // Check if wallet is already connected
+    // Check if wallet is already isConnected
     const savedAddress = localStorage.getItem('walletAddress');
     if (savedAddress) {
-      setConnected(true);
+      //setisConnected(true);
       setAccountInfo({
         ...mockAccountInfo,
         address: savedAddress
@@ -134,7 +159,7 @@ const VaultDashboard: React.FC = () => {
       
       const address = '0x' + Math.random().toString(16).substr(2, 40);
       localStorage.setItem('walletAddress', address);
-      setConnected(true);
+      //setisConnected(true);
       
       setAccountInfo({
         ...mockAccountInfo,
@@ -142,7 +167,7 @@ const VaultDashboard: React.FC = () => {
       });
       setTransactions(mockTransactions);
       
-      message.success('Wallet connected successfully!');
+      message.success('Wallet isConnected successfully!');
     } catch (error) {
       console.error('Error connecting wallet:', error);
       message.error('Failed to connect wallet');
@@ -153,10 +178,10 @@ const VaultDashboard: React.FC = () => {
 
   const disconnectWallet = () => {
     localStorage.removeItem('walletAddress');
-    setConnected(false);
+    //setisConnected(false);
     setAccountInfo(null);
     setShowDrawer(false);
-    message.info('Wallet disconnected');
+    message.info('Wallet disisConnected');
   };
 
   const handleWithdraw = async () => {
@@ -341,63 +366,62 @@ const VaultDashboard: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f0f2f5' }}>
-      <Header style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        background: '#fff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        padding: '0 24px'
-      }}>
+    <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
+
+      {isConnected && (
+      <Header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "#fff",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          padding: "0 24px",
+        }}
+      >
         <Space>
-          <WalletOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-          <Title level={3} style={{ margin: 0 }}>Vault Management</Title>
+          <Button
+            type="text"
+            icon={
+              <WalletOutlined style={{ fontSize: "24px", color: "#1890ff" }} />
+            }
+            onClick={() => setShowDrawer(true)}
+          />
+
+          <Title level={3} style={{ margin: 0 }}></Title>
         </Space>
-        
+
         <Space>
-          {connected ? (
-            <>
-              <Button 
-                icon={<SettingOutlined />} 
-                onClick={() => setShowDrawer(true)}
-              >
-                {accountInfo ? formatAddress(accountInfo.address) : 'Account'}
-              </Button>
-              <Button 
-                icon={<LogoutOutlined />} 
-                onClick={disconnectWallet}
-                danger
-              >
-                Disconnect
-              </Button>
-            </>
-          ) : (
-            <Button 
-              type="primary" 
-              icon={<WalletOutlined />} 
-              loading={loading}
-              onClick={connectWallet}
-              disabled={!isMetamaskInstalled}
-            >
-              {isMetamaskInstalled ? 'Connect Wallet' : 'Install MetaMask'}
-            </Button>
-          )}
+          <appkit-button />
         </Space>
       </Header>
-
-      <Content style={{ padding: '24px' }}>
-        {connected && accountInfo ? (
-          <Card style={{ borderRadius: '8px', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}>
+      )}
+      
+      <Content style={{ padding: "24px" }}>
+        {isConnected && accountInfo ? (
+          <Card
+            style={{
+              borderRadius: "8px",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+            }}
+          >
             <Tabs defaultActiveKey="1" type="card">
-              <TabPane tab={<span><ArrowUpOutlined />Withdraw</span>} key="1">
+              <TabPane
+                tab={
+                  <span>
+                    <ArrowUpOutlined />
+                    Withdraw
+                  </span>
+                }
+                key="1"
+              >
                 <Row gutter={[24, 24]}>
                   <Col xs={24} md={12}>
-                    <Card title="Regular Withdrawal" style={{ height: '100%' }}>
+                    <Card title="Regular Withdrawal" style={{ height: "100%" }}>
                       <Form layout="vertical">
                         <Form.Item label="Amount to Withdraw (USDT)" required>
                           <InputNumber
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                             min={1}
                             max={accountInfo.availableWithdraw}
                             value={withdrawAmount}
@@ -406,23 +430,36 @@ const VaultDashboard: React.FC = () => {
                             size="large"
                           />
                         </Form.Item>
-                        
-                        <Space direction="vertical" style={{ width: '100%' }}>
+
+                        <Space direction="vertical" style={{ width: "100%" }}>
                           <Text type="secondary">
-                            Available to withdraw: <Text strong>{accountInfo.availableWithdraw} USDT</Text>
+                            Available to withdraw:{" "}
+                            <Text strong>
+                              {accountInfo.availableWithdraw} USDT
+                            </Text>
                           </Text>
                           <Text type="secondary">
-                            Monthly withdrawals: <Text strong>{accountInfo.monthlyWithdrawals}/3</Text>
+                            Monthly withdrawals:{" "}
+                            <Text strong>
+                              {accountInfo.monthlyWithdrawals}/3
+                            </Text>
                           </Text>
-                          
-                          <Button 
-                            type="primary" 
+
+                          <Button
+                            type="primary"
                             onClick={handleWithdraw}
                             loading={loading}
-                            disabled={!withdrawAmount || withdrawAmount > accountInfo.availableWithdraw}
+                            disabled={
+                              !withdrawAmount ||
+                              withdrawAmount > accountInfo.availableWithdraw
+                            }
                             icon={<ArrowUpOutlined />}
                             size="large"
-                            style={{ width: '100%', marginTop: 16, height: '45px' }}
+                            style={{
+                              width: "100%",
+                              marginTop: 16,
+                              height: "45px",
+                            }}
                           >
                             Withdraw
                           </Button>
@@ -430,13 +467,16 @@ const VaultDashboard: React.FC = () => {
                       </Form>
                     </Card>
                   </Col>
-                  
+
                   <Col xs={24} md={12}>
-                    <Card title="Emergency Withdrawal" style={{ height: '100%' }}>
+                    <Card
+                      title="Emergency Withdrawal"
+                      style={{ height: "100%" }}
+                    >
                       <Form layout="vertical">
                         <Form.Item label="Amount to Withdraw (USDT)" required>
                           <InputNumber
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                             min={1}
                             value={emergencyAmount}
                             onChange={(value) => setEmergencyAmount(value || 0)}
@@ -444,35 +484,46 @@ const VaultDashboard: React.FC = () => {
                             size="large"
                           />
                         </Form.Item>
-                        
+
                         <Form.Item label="Emergency Password" required>
                           <Input.Password
                             value={emergencyPassword}
-                            onChange={(e) => setEmergencyPassword(e.target.value)}
+                            onChange={(e) =>
+                              setEmergencyPassword(e.target.value)
+                            }
                             placeholder="Enter password from trusted partner"
                             size="large"
                           />
                         </Form.Item>
-                        
-                        <Button 
-                          type="primary" 
+
+                        <Button
+                          type="primary"
                           danger
                           onClick={handleEmergencyWithdraw}
                           loading={loading}
                           disabled={!emergencyAmount || !emergencyPassword}
                           icon={<ArrowUpOutlined />}
                           size="large"
-                          style={{ width: '100%', height: '45px' }}
+                          style={{ width: "100%", height: "45px" }}
                         >
                           Emergency Withdraw
                         </Button>
-                        
+
                         <Divider />
-                        
-                        <div style={{ background: '#fff2e8', padding: '12px', borderRadius: '6px' }}>
-                          <InfoCircleOutlined style={{ color: '#fa8c16', marginRight: '8px' }} />
+
+                        <div
+                          style={{
+                            background: "#fff2e8",
+                            padding: "12px",
+                            borderRadius: "6px",
+                          }}
+                        >
+                          <InfoCircleOutlined
+                            style={{ color: "#fa8c16", marginRight: "8px" }}
+                          />
                           <Text type="warning">
-                            Emergency withdrawals require a password from your trusted partner and have a 30-day cooldown period.
+                            Emergency withdrawals require a password from your
+                            trusted partner and have a 30-day cooldown period.
                           </Text>
                         </div>
                       </Form>
@@ -481,14 +532,22 @@ const VaultDashboard: React.FC = () => {
                 </Row>
               </TabPane>
 
-              <TabPane tab={<span><ArrowDownOutlined />Deposit</span>} key="2">
+              <TabPane
+                tab={
+                  <span>
+                    <ArrowDownOutlined />
+                    Deposit
+                  </span>
+                }
+                key="2"
+              >
                 <Row justify="center">
                   <Col xs={24} md={12} lg={8}>
                     <Card title="Deposit Funds">
                       <Form layout="vertical">
                         <Form.Item label="Amount to Deposit (USDT)" required>
                           <InputNumber
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                             min={1}
                             value={depositAmount}
                             onChange={(value) => setDepositAmount(value || 0)}
@@ -496,24 +555,27 @@ const VaultDashboard: React.FC = () => {
                             size="large"
                           />
                         </Form.Item>
-                        
-                        <Button 
-                          type="primary" 
+
+                        <Button
+                          type="primary"
                           onClick={handleDeposit}
                           loading={loading}
                           disabled={!depositAmount}
                           icon={<ArrowDownOutlined />}
                           size="large"
-                          style={{ width: '100%', height: '45px' }}
+                          style={{ width: "100%", height: "45px" }}
                         >
                           Deposit
                         </Button>
-                        
+
                         <Divider />
-                        
-                        <div style={{ textAlign: 'center' }}>
+
+                        <div style={{ textAlign: "center" }}>
                           <Text>
-                            Current Balance: <Text strong style={{ fontSize: '18px' }}>{accountInfo.balance} USDT</Text>
+                            Current Balance:{" "}
+                            <Text strong style={{ fontSize: "18px" }}>
+                              {accountInfo.balance} USDT
+                            </Text>
                           </Text>
                         </div>
                       </Form>
@@ -522,10 +584,19 @@ const VaultDashboard: React.FC = () => {
                 </Row>
               </TabPane>
 
-              <TabPane tab={<span><HistoryOutlined />Transactions</span>} key="3">
+              <TabPane
+                tab={
+                  <span>
+                    <HistoryOutlined />
+                    Transactions
+                  </span>
+                }
+                key="3"
+              >
                 <Card title="Transaction History">
-                  <Table 
-                    columns={transactionColumns} 
+                  <Table
+                    className="digits"
+                    columns={transactionColumns}
                     dataSource={transactions}
                     pagination={{ pageSize: 5 }}
                     scroll={{ x: true }}
@@ -538,46 +609,53 @@ const VaultDashboard: React.FC = () => {
                   <Col xs={24} md={8}>
                     <Card>
                       <Statistic
+                        className="digits"
                         title="Total Balance"
                         value={accountInfo.balance}
                         precision={2}
-                        valueStyle={{ color: '#3f8600' }}
+                        valueStyle={{ color: "#3f8600" }}
                         suffix="USDT"
                       />
                     </Card>
                   </Col>
-                  
+
                   <Col xs={24} md={8}>
                     <Card>
                       <Statistic
+                        className="digits"
                         title="Available to Withdraw"
                         value={accountInfo.availableWithdraw}
-                        valueStyle={{ color: '#1890ff' }}
+                        valueStyle={{ color: "#1890ff" }}
                         suffix="USDT"
                       />
                     </Card>
                   </Col>
-                  
+
                   <Col xs={24} md={8}>
                     <Card>
                       <Statistic
+                        className="digits"
                         title="ETH Value"
                         value={accountInfo.ethValue}
                         precision={4}
-                        valueStyle={{ color: '#722ed1' }}
+                        valueStyle={{ color: "#722ed1" }}
                         prefix="Ξ"
                       />
                     </Card>
                   </Col>
-                  
+
                   <Col xs={24}>
                     <Card title="Withdrawal Limits">
                       <Descriptions bordered column={1}>
                         <Descriptions.Item label="Current Tier Limit">
-                          <Text strong>{accountInfo.withdrawalLimit} USDT</Text>
+                          <Text strong className="digits">
+                            {accountInfo.withdrawalLimit} USDT
+                          </Text>
                         </Descriptions.Item>
                         <Descriptions.Item label="Monthly Withdrawals Used">
-                          <Text strong>{accountInfo.monthlyWithdrawals} / 3</Text>
+                          <Text strong className="digits">
+                            {accountInfo.monthlyWithdrawals} / 3
+                          </Text>
                         </Descriptions.Item>
                         <Descriptions.Item label="Next Reset">
                           15th of next month
@@ -590,36 +668,21 @@ const VaultDashboard: React.FC = () => {
             </Tabs>
           </Card>
         ) : (
-          <Row justify="center" style={{ marginTop: '60px' }}>
+          <Row justify="center" style={{ marginTop: "60px" }}>
             <Col xs={24} md={12} lg={8}>
-              <Card style={{ textAlign: 'center', borderRadius: '8px' }}>
-                <WalletOutlined style={{ fontSize: '64px', color: '#1890ff', marginBottom: '16px' }} />
+                <Card style={{ textAlign: "center", borderRadius: "8px" }}>
+                  <Flex vertical align='center' justify='center'>
+                    
+                    <img src={vault} style={{width: 185, padding: 5}}  />
                 <Title level={3}>Connect Your Wallet</Title>
-                <Text type="secondary" style={{ display: 'block', marginBottom: '24px' }}>
-                  Connect your wallet to manage your vault, make deposits and withdrawals, 
-                  and view your transaction history.
-                </Text>
-                <Button 
-                  type="primary" 
-                  size="large" 
-                  icon={<WalletOutlined />}
-                  loading={loading}
-                  onClick={connectWallet}
-                  disabled={!isMetamaskInstalled}
-                  style={{ height: '45px', width: '200px' }}
+                <Text
+                  type="secondary"
+                  style={{ display: "block", marginBottom: "24px" }}
                 >
-                  {isMetamaskInstalled ? 'Connect Wallet' : 'Install MetaMask'}
-                </Button>
-                
-                {!isMetamaskInstalled && (
-                  <div style={{ marginTop: '16px' }}>
-                    <Text type="secondary">
-                      <a href="https://metamask.io/download.html" target="_blank" rel="noopener noreferrer">
-                        Download MetaMask
-                      </a>
-                    </Text>
-                  </div>
-                )}
+                  Connect your wallet to manage your vault, make deposits and
+                  withdrawals, and view your transaction history.
+                </Text>
+                <appkit-button /></Flex>
               </Card>
             </Col>
           </Row>
@@ -628,47 +691,39 @@ const VaultDashboard: React.FC = () => {
 
       <Drawer
         title="Account Details"
-        placement="right"
+        placement="left"
         onClose={() => setShowDrawer(false)}
         open={showDrawer}
         width={400}
       >
         {accountInfo && (
           <>
-            <Descriptions column={1} bordered size="small">
-              <Descriptions.Item label="Wallet Address">
-                <Text copyable={{ text: accountInfo.address }}>
-                  {formatAddress(accountInfo.address)}
-                </Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Balance">
-                <Text strong>{accountInfo.balance} USDT</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="ETH Value">
-                <Text strong>Ξ {accountInfo.ethValue.toLocaleString()}</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Available to Withdraw">
-                <Text strong>{accountInfo.availableWithdraw} USDT</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Withdrawal Limit">
-                <Text strong>{accountInfo.withdrawalLimit} USDT</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Monthly Withdrawals">
-                <Text strong>{accountInfo.monthlyWithdrawals} / 3</Text>
-              </Descriptions.Item>
-            </Descriptions>
-            
-            <Divider />
-            
-            <Button 
-              type="primary" 
-              danger 
-              icon={<LogoutOutlined />}
-              onClick={disconnectWallet}
-              style={{ width: '100%', height: '40px' }}
-            >
-              Disconnect Wallet
-            </Button>
+            <ActionButtonList
+              sendHash={receiveHash}
+              sendSignMsg={receiveSignedMsg}
+              sendBalance={receivebalance}
+            />
+            <SmartContractActionButtonList />
+            <div className="advice">
+              <p>
+                This projectId only works on localhost. <br />
+                Go to{" "}
+                <a
+                  href="https://cloud.reown.com"
+                  target="_blank"
+                  className="link-button"
+                  rel="Reown Cloud"
+                >
+                  Reown Cloud
+                </a>{" "}
+                to get your own.
+              </p>
+            </div>
+            <InfoList
+              hash={transactionHash}
+              signedMsg={signedMsg}
+              balance={balance}
+            />
           </>
         )}
       </Drawer>
