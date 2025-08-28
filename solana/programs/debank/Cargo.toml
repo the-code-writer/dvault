@@ -1,0 +1,23 @@
+[package]
+name = "debank"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "debank"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+commons = { path = "../commons", features = ["cpi"]}
+cellar = { path = "../cellar", features = ["cpi"]}
+anchor-lang = { git = "https://github.com/coral-xyz/anchor.git", features = ["init-if-needed"]}
+anchor-spl = { git = "https://github.com/coral-xyz/anchor.git"}

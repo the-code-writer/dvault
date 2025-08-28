@@ -1,0 +1,54 @@
+.txn-list-card-date {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #98a0ab;
+}
+
+.txn-list-card-status {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4d835e;
+    background-color: #e7fbec;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.txn-list-card-title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #484c54;
+}
+
+
+.txn-list-card-sol {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 26px;
+    color: #484c54;
+}
+
+.txn-list-card-hash,
+.txn-list-card-hash> a,
+.txn-list-card-amount {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #98a0ab;
+}
+
+.txn-list-card-btn {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.5;
+    border: 0;
+    color: #484c54;
+    background-color: #e9eaec;
+}
+
+.txn-list-card-btn svg{
+    width: 12px;
+    height: 12px;
+}

@@ -1,0 +1,26 @@
+.portal-embedded {
+
+    width: 100%;
+    padding: 0 50px;
+
+    .layout-wrapper {
+
+        margin-bottom: 24px;
+        box-shadow: 1px 1px 10px #786d8e21;
+        border-radius: 5px !important;
+
+        .bg-white {
+            background: #ffffff;
+        }
+
+        .content-wrapper {
+
+            padding: 0 24px;
+            min-height: 280px;
+            background: #ffffff;
+
+        }
+
+    }
+
+}

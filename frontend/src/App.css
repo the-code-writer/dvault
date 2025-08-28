@@ -1,0 +1,29 @@
+.ant-app > .ant-layout{
+  min-height: 100vh;
+}
+
+.ant-layout-header {
+  height: 80px !important;
+  padding: 0 50px;
+  color: rgba(0, 0, 0, 0.88);
+  line-height: 64px;
+  background: #ffffff;
+}
+
+.ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected::after, 
+.ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-item-selected::after, 
+.ant-menu-light.ant-menu-horizontal >.ant-menu-submenu-selected::after, 
+.ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-submenu-selected::after {
+  border-bottom-width: 2px;
+  border-bottom-color: #000000 !important;
+}
+
+@media (min-width: 700px) {
+  .ant-modal .ant-modal-content {
+    padding: 32px !important;
+  }
+}
+
+.ant-layout {
+  background-color: #FCFCFC !important;
+}

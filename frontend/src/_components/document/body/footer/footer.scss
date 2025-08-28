@@ -1,0 +1,23 @@
+ .ant-layout-footer {
+
+    background-color: transparent;
+
+     .copyright-info {
+         text-align: left;
+     }
+
+     .legal-links {
+         text-align: right;
+     }
+
+     @media (max-width: 543px) {
+         .copyright-info {
+             text-align: center;
+             margin-bottom: 20px;
+         }
+
+         .legal-links {
+             text-align: center;
+         }
+     }
+ }

@@ -1,0 +1,11 @@
+[build]
+target = "bpfel-unknown-unknown"
+
+[target.bpfel-unknown-unknown]
+rustflags = [
+    "-C", "linker=rust-lld",
+    "-C", "target-cpu=generic",
+]
+
+[net]
+git-fetch-with-cli = true

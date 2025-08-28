@@ -1,0 +1,92 @@
+.ant-layout-header {
+  height: 80px;
+  width: 100%;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+  padding: 0 50px;
+  color: #262120;
+  line-height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #F4F4F4;
+
+  .ant-menu-title-content {
+    font-family: "Inter";
+    font-size: 16px;
+    margin-top: -7px;
+    display: block;
+    font-weight: 600;
+  }
+
+  ul.ant-menu-root {
+    border: 0px;
+  }
+
+  ul.ant-menu-root li {
+    height: 50px;
+  }
+}
+
+.ant-menu-light.ant-menu-horizontal>.ant-menu-item-selected,
+.ant-menu-light>.ant-menu.ant-menu-horizontal>.ant-menu-submenu-selected {
+  color: #000000 !important;
+  background-color: transparent;
+}
+
+.ant-menu-light.ant-menu-horizontal>.ant-menu-item-selected,
+.ant-menu-light.ant-menu-horizontal>.ant-menu-item-selected::after,
+.ant-menu-light>.ant-menu.ant-menu-horizontal>.ant-menu-submenu-selected::after,
+.ant-menu-light>.ant-menu.ant-menu-horizontal>.ant-menu-submenu-selected::after:hover {
+  border-bottom-width: 2px;
+  border-bottom-color: #000000 !important;
+}
+
+.ant-menu-submenu-selected::after {
+  border-bottom-width: 2px;
+  border-bottom-color: #000000 !important;
+}
+
+.mobile-hamburger-menu {
+  display: none;
+}
+
+@media (max-width: 700px) {
+
+  .mobile-hamburger-menu {
+    display: inline-block;
+  }
+
+  .ant-layout-header {
+    padding: 0 5px;
+  }
+
+  .ant-layout-header .ant-menu-title-content,
+  .btn-connect-wallet {
+    font-size: 15px !important;
+    color: rgba(0, 0, 0, 0.88) !important;
+  }
+
+  .txn-list-card-title, .txn-list-card-sol {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+  }
+
+  .txn-list-card-hash, .txn-list-card-hash > a, .txn-list-card-amount {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .txn-details-status-list-item {
+    padding: 16px;
+  }
+  
+
+}
+
+.ant-menu-light.ant-menu-horizontal >.ant-menu-item::after, 
+.ant-menu-horizontal >.ant-menu-submenu::after {
+  border-bottom: 2px solid transparent !important;
+}
+
+.ant-menu-light.ant-menu-horizontal >.ant-menu-item:has(.active)::after, 
+.ant-menu-horizontal >.ant-menu-submenu:has(.active)::after {
+  border-bottom: 2px solid #000000 !important;
+}

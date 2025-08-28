@@ -1,0 +1,159 @@
+.txn-list-card-date {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #98a0ab;
+}
+
+.txn-list-card-status {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4d835e;
+    background-color: #e7fbec;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.txn-list-card-details-title,
+.txn-list-card-details-sol {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #484c54;
+
+    font-weight: 600 !important;
+    font-size: 24px !important;
+    line-height: 1.5 !important;
+    color: #262120 !important;
+    margin-top: 0;
+    margin-bottom: 0px;
+}
+
+.txn-list-card-hash,
+.txn-list-card-hash> a,
+.txn-list-card-amount {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #98a0ab;
+}
+
+.txn-list-card-btn {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.5;
+    border: 0;
+    color: #484c54;
+    background-color: #e9eaec;
+}
+
+.txn-details-status-list-item {
+    padding: 16px 24px;
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+.txn-details-status-list-item.pending {
+    background-color: #f5f5f5;
+    border-color: #e9eaec;
+}
+
+.txn-details-status-list-item.success {
+    background-color: #e7fbec;
+    border-color: #e7fbec;
+}
+
+.txn-details-status-list-item.error {
+    background-color: #fbe7e7;
+    border-color: #fbe7e7;
+}
+
+.txn-details-status-icon{
+    font-size: 32px;
+}
+
+.txn-details-status-icon.pending{
+    color: #484c54;
+}
+
+.txn-details-status-icon.success{
+    color: #4d835e;
+}
+
+.txn-details-status-icon.error{
+    color: #d64a4a;
+}
+
+.txn-details-status-label,
+.txn-details-status-value{
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.txn-details-status-label.pending,
+.txn-details-status-value.pending{
+    color: #484c54;
+}
+
+.txn-details-status-label.success,
+.txn-details-status-value.success{
+    color: #4d835e;
+}
+
+.txn-details-status-label.error,
+.txn-details-status-value.error{
+    color: #d64a4a;
+}
+
+.txn-details-summary-list-item{
+    padding: 16px;
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid #e9eaec;
+}
+
+.txn-details-summary-label{
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #484c54;
+}
+
+.txn-details-summary-value,
+.txn-details-summary-value a{
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #98a0ab;
+}
+
+
+.amounts-right{
+    text-align: right;
+    min-width: 180px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.txn-details-summary-status{
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.txn-details-summary-status.locked{
+    color: #98a0ab;
+    background-color: #f5f5f5;
+}
+
+.txn-details-summary-status.unlocked{
+    color: #4d835e;
+    background-color: #e7fbec;
+}

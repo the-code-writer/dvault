@@ -1,0 +1,98 @@
+.txn-unlock-criteria-container-fluid{
+
+    cursor: pointer;
+
+}
+
+.txn-unlock-criteria-label {
+
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22.4px;
+    text-align: left;
+
+    color: #484c54
+}
+
+.txn-unlock-criteria-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e9eaec;
+    padding: 8px 16px;
+    border-radius: 10px;
+    width: 100%;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1;
+    color: #484c54;
+    min-height: 56px !important;
+}
+
+.txn-unlock-criteria-btn-wrapper {
+    font-size: 14px;
+    line-height: 1.5714285714285714;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 6px;
+    margin-top: -3px;
+}
+
+.txn-unlock-criteria-form-label {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19.6px;
+    text-align: left;
+    color: #98A0AB;
+}
+.txn-unlock-criteria-form-input {
+    width: 100%;
+    padding: 10px 16px 10px 16px;
+    height: 48px;
+    gap: 5px;
+    border-radius: 10px;
+    border: 1px;
+    color: #484C54;
+    background-color: #f5f5f5;
+    border: 1px solid #e9eaec;
+}
+
+.ant-picker-outlined:hover {
+    border-color: #484C54 !important;
+    background-color: #ffffff;
+}
+
+.ant-picker-suffix svg {
+    height: 20px;
+    width: 20px;
+}
+
+.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+    border: 1px solid #484C54;
+    border-radius: 4px;
+}
+
+.ant-picker-now-btn{
+    color: #484C54;
+}
+
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):active {
+    color: #fff;
+    background: #484c54;
+    border-color: #484c54;
+}
+
+.ant-radio-group-solid :where(.css-dev-only-do-not-override-mzwlov).ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+    color: #fff;
+    background: #484c54 !important;
+    border-color: #484c54;
+}
+
+:where(.css-dev-only-do-not-override-mzwlov).ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+    background-color: #484c54;
+}
+
+.ant-radio-button-wrapper:hover {
+    position: relative;
+    color: #484c54;
+}
