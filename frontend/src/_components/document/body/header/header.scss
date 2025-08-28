@@ -90,3 +90,22 @@
 .ant-menu-horizontal >.ant-menu-submenu:has(.active)::after {
   border-bottom: 2px solid #000000 !important;
 }
+
+
+.tabs-container {
+  transition: all 0.3s ease;
+  
+  &.sticky {
+    position: fixed;
+    top: 64px; /* Default Ant Design header height */
+    width: 100%;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Add smooth transition for the content adjustment */
+.page-content {
+  transition: padding-top 0.3s ease;
+}
