@@ -1,0 +1,224 @@
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+const { time } = require("@nomicfoundation/hardhat-network-helpers");
+
+describe("SecureVault", function () {
+  let SecureVault;
+  let vault;
+  let owner;
+  let trustedPartner;
+  let accountabilityPartner;
+  let usdt;
+  let addr1;
+
+  const USDT_DECIMALS = 6;
+  const INITIAL_USDT = ethers.parseUnits("10000", USDT_DECIMALS); // 10,000 USDT
+
+  beforeEach(async function () {
+    [owner, trustedPartner, accountabilityPartner, addr1] = await ethers.getSigners();
+
+    // Deploy USDT mock
+    const USDT = await ethers.getContractFactory("MockERC20");
+    usdt = await USDT.deploy("USDT", "USDT", USDT_DECIMALS);
+    await usdt.waitForDeployment();
+    await usdt.mint(owner.address, INITIAL_USDT);
+    await usdt.mint(addr1.address, INITIAL_USDT);
+
+    // Deploy SecureVault
+    SecureVault = await ethers.getContractFactory("SecureVault");
+    vault = await SecureVault.deploy(await usdt.getAddress(), trustedPartner.address);
+    await vault.waitForDeployment();
+
+    // Approve vault to spend owner's USDT
+    await usdt.connect(owner).approve(await vault.getAddress(), INITIAL_USDT);
+  });
+
+  describe("Deployment", function () {
+    it("Should set the right owner and trusted partner", async function () {
+      expect(await vault.owner()).to.equal(owner.address);
+      expect(await vault.trustedPartner()).to.equal(trustedPartner.address);
+    });
+  });
+
+  describe("Deposit", function () {
+    it("Should allow owner to deposit USDT", async function () {
+      const depositAmount = ethers.parseUnits("1000", USDT_DECIMALS);
+      await expect(vault.connect(owner).deposit(depositAmount))
+        .to.emit(vault, "Deposited")
+        .withArgs(owner.address, depositAmount);
+      expect(await usdt.balanceOf(await vault.getAddress())).to.equal(depositAmount);
+    });
+
+    it("Should revert if deposit amount is zero", async function () {
+      await expect(vault.connect(owner).deposit(0)).to.be.revertedWith("Amount must be greater than 0");
+    });
+  });
+
+  describe("Withdrawal", function () {
+    const depositAmount = ethers.parseUnits("3000", USDT_DECIMALS);
+
+    beforeEach(async function () {
+      await vault.connect(owner).deposit(depositAmount);
+      // Fast-forward to after the 15th of the month
+      await time.increase(16 * 24 * 60 * 60); // 16 days
+    });
+
+    it("Should allow owner to withdraw within limit", async function () {
+      const withdrawAmount = ethers.parseUnits("1000", USDT_DECIMALS);
+      await expect(vault.connect(owner).withdraw(withdrawAmount))
+        .to.emit(vault, "Withdrawn")
+        .withArgs(owner.address, withdrawAmount);
+      expect(await usdt.balanceOf(await vault.getAddress())).to.equal(depositAmount - withdrawAmount);
+    });
+
+    it("Should revert if withdrawal exceeds limit", async function () {
+      const withdrawAmount = ethers.parseUnits("1500", USDT_DECIMALS);
+      await expect(vault.connect(owner).withdraw(withdrawAmount)).to.be.revertedWith("Amount exceeds withdrawal limit");
+    });
+
+    it("Should revert if withdrawal is before the 15th", async function () {
+      await time.increase(-16 * 24 * 60 * 60); // Rewind to before the 15th
+      await expect(vault.connect(owner).withdraw(ethers.parseUnits("100", USDT_DECIMALS))).to.be.revertedWith("Withdrawals only allowed after 15th of month");
+    });
+  });
+
+  describe("Emergency Withdrawal", function () {
+    const depositAmount = ethers.parseUnits("3000", USDT_DECIMALS);
+    const emergencyAmount = ethers.parseUnits("500", USDT_DECIMALS);
+    const password = "secure123";
+    let passwordHash;
+
+    beforeEach(async function () {
+      await vault.connect(owner).deposit(depositAmount);
+      passwordHash = ethers.keccak256(ethers.toUtf8Bytes(password));
+      await vault.connect(trustedPartner).setPasswordHash(passwordHash);
+    });
+
+    it("Should allow emergency withdrawal with correct password", async function () {
+      await expect(vault.connect(owner).emergencyWithdraw(emergencyAmount, password))
+        .to.emit(vault, "EmergencyWithdraw")
+        .withArgs(owner.address, emergencyAmount);
+      expect(await usdt.balanceOf(await vault.getAddress())).to.equal(depositAmount - emergencyAmount);
+    });
+
+    it("Should revert if password is incorrect", async function () {
+      await expect(vault.connect(owner).emergencyWithdraw(emergencyAmount, "wrongpassword")).to.be.revertedWith("Invalid password");
+    });
+
+    it("Should revert if password is expired", async function () {
+      await time.increase(8 * 24 * 60 * 60); // 8 days (password expires after 7)
+      await expect(vault.connect(owner).emergencyWithdraw(emergencyAmount, password)).to.be.revertedWith("Password expired");
+    });
+
+    it("Should revert if emergency withdrawal is on cooldown", async function () {
+      await vault.connect(owner).emergencyWithdraw(emergencyAmount, password);
+      await expect(vault.connect(owner).emergencyWithdraw(emergencyAmount, password)).to.be.revertedWith("Emergency withdrawal cooldown active");
+    });
+  });
+
+  describe("Savings Goals", function () {
+    it("Should allow owner to create a savings goal", async function () {
+      const purpose = "Vacation";
+      const targetAmount = ethers.parseUnits("2000", USDT_DECIMALS);
+      const monthsToTarget = 6;
+      await expect(vault.connect(owner).createSavingsGoal(purpose, targetAmount, monthsToTarget))
+        .to.emit(vault, "SavingsGoalCreated")
+        .withArgs(0, purpose, targetAmount, anyValue); // anyValue is a placeholder for the targetDate
+    });
+
+    it("Should revert if target amount is zero", async function () {
+      await expect(vault.connect(owner).createSavingsGoal("Vacation", 0, 6)).to.be.revertedWith("Target amount must be greater than 0");
+    });
+  });
+
+  describe("Scheduled Withdrawals", function () {
+    const depositAmount = ethers.parseUnits("3000", USDT_DECIMALS);
+    const scheduleAmount = ethers.parseUnits("500", USDT_DECIMALS);
+    const daysFromNow = 5;
+
+    beforeEach(async function () {
+      await vault.connect(owner).deposit(depositAmount);
+      await time.increase(16 * 24 * 60 * 60); // After the 15th
+    });
+
+    it("Should allow owner to schedule a withdrawal", async function () {
+      await expect(vault.connect(owner).scheduleWithdrawal(scheduleAmount, daysFromNow, "Rent"))
+        .to.emit(vault, "WithdrawalScheduled")
+        .withArgs(0, scheduleAmount, anyValue, "Rent"); // anyValue is a placeholder for scheduledTime
+    });
+
+    it("Should allow owner to execute a scheduled withdrawal after time", async function () {
+      await vault.connect(owner).scheduleWithdrawal(scheduleAmount, daysFromNow, "Rent");
+      await time.increase(daysFromNow * 24 * 60 * 60);
+      await expect(vault.connect(owner).executeScheduledWithdrawal(0))
+        .to.emit(vault, "Withdrawn")
+        .withArgs(owner.address, scheduleAmount);
+    });
+
+    it("Should revert if trying to execute before scheduled time", async function () {
+      await vault.connect(owner).scheduleWithdrawal(scheduleAmount, daysFromNow, "Rent");
+      await expect(vault.connect(owner).executeScheduledWithdrawal(0)).to.be.revertedWith("It's not time yet");
+    });
+  });
+
+  describe("Discipline Rewards", function () {
+    const depositAmount = ethers.parseUnits("3000", USDT_DECIMALS);
+    const withdrawAmount = ethers.parseUnits("100", USDT_DECIMALS);
+
+    beforeEach(async function () {
+      await vault.connect(owner).deposit(depositAmount);
+      await time.increase(16 * 24 * 60 * 60); // After the 15th
+    });
+
+    it("Should reward owner after 3 disciplined months", async function () {
+      // First withdrawal
+      await vault.connect(owner).withdraw(withdrawAmount);
+      // Fast-forward 3 months (90 days)
+      await time.increase(90 * 24 * 60 * 60);
+      // Second withdrawal (after 3 months)
+      await expect(vault.connect(owner).withdraw(withdrawAmount))
+        .to.emit(vault, "DisciplineRewardClaimed")
+        .withArgs(owner.address, ethers.parseUnits("50", USDT_DECIMALS));
+    });
+  });
+
+  describe("Trusted Partner", function () {
+    it("Should allow owner to propose a new trusted partner", async function () {
+      await expect(vault.connect(owner).proposeTrustedPartner(addr1.address))
+        .to.emit(vault, "TrustedPartnerProposed")
+        .withArgs(trustedPartner.address, addr1.address);
+    });
+
+    it("Should allow pending partner to accept", async function () {
+      await vault.connect(owner).proposeTrustedPartner(addr1.address);
+      await expect(vault.connect(addr1).acceptTrustedPartner())
+        .to.emit(vault, "TrustedPartnerChanged")
+        .withArgs(trustedPartner.address, addr1.address);
+      expect(await vault.trustedPartner()).to.equal(addr1.address);
+    });
+  });
+
+  describe("Accountability Partners", function () {
+    it("Should allow owner to add an accountability partner", async function () {
+      await expect(vault.connect(owner).addAccountabilityPartner(accountabilityPartner.address))
+        .to.emit(vault, "AccountabilityPartnerAdded")
+        .withArgs(accountabilityPartner.address);
+      expect(await vault.accountabilityPartners(accountabilityPartner.address)).to.be.true;
+    });
+
+    it("Should allow accountability partner to view balance", async function () {
+      await vault.connect(owner).addAccountabilityPartner(accountabilityPartner.address);
+      expect(await vault.connect(accountabilityPartner).viewBalance()).to.equal(0);
+    });
+  });
+
+  describe("Financial Health", function () {
+    it("Should return correct financial health metrics", async function () {
+      const depositAmount = ethers.parseUnits("3000", USDT_DECIMALS);
+      await vault.connect(owner).deposit(depositAmount);
+      const health = await vault.getFinancialHealth();
+      expect(health.totalBalance).to.equal(depositAmount);
+      expect(health.currentWithdrawalLimit).to.equal(ethers.parseUnits("1000", USDT_DECIMALS));
+    });
+  });
+});
