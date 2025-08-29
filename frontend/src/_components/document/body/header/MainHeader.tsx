@@ -1,134 +1,169 @@
-/* eslint-disable */
-import { Layout, Affix, Menu, Flex } from "antd";
-import "./header.scss";
+import React, { useState, useEffect } from "react";
+import { Layout, Affix, Menu, Flex, Drawer, Button } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
 import { SolanaConnectionButton } from "../../../button";
+import {
+  MenuOutlined,
+  DashboardOutlined,
+  CreditCardOutlined,
+  DownloadOutlined,
+  SendOutlined,
+  SwapOutlined,
+  HistoryOutlined,
+} from "@ant-design/icons";
 
 const { Header } = Layout;
 
-const MainHeader: React.FC = () => {
+const MainHeader = () => {
   const location = useLocation();
-  const pageSegments = location.pathname.split("/").filter(Boolean);
-  const [selectedKey, setSelectedKey] = useState(0);
-  const [isSticky, setIsSticky] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [selectedKey, setSelectedKey] = useState("0");
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const items = [
+  // Update window width on resize
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Map pathnames to menu keys
+  const pathToKeyMap = {
+    "/dashboard": "0",
+    "/deposit": "1",
+    "/withdraw": "2",
+    "/send": "3",
+    "/swap": "4",
+    "/transactions": "5",
+  };
+
+  // Update selected key based on current path
+  useEffect(() => {
+    const pathname = location.pathname;
+
+    // Find the matching key
+    for (const [path, key] of Object.entries(pathToKeyMap)) {
+      if (pathname === path || pathname.startsWith(path + "/")) {
+        setSelectedKey(key);
+        return;
+      }
+    }
+
+    // Default to dashboard if no match
+    setSelectedKey("0");
+  }, [location.pathname]);
+
+  const menuItems = [
     {
-      key: 0,
-      label: (
-        <Link className={pageSegments[0] === "send" ? "active" : ""} to="/send">
-          Send
-        </Link>
-      ),
+      key: "0",
+      label: <Link to="/dashboard">Dashboard</Link>,
+      icon: <DashboardOutlined />,
     },
     {
-      key: 1,
-      label: (
-        <Link
-          className={pageSegments[0] === "transactions" ? "active" : ""}
-          to="/transactions"
-        >
-          Transactions
-        </Link>
-      ),
+      key: "1",
+      label: <Link to="/deposit">Deposit</Link>,
+      icon: <CreditCardOutlined />,
+    },
+    {
+      key: "2",
+      label: <Link to="/withdraw">Withdraw</Link>,
+      icon: <DownloadOutlined />,
+    },
+    {
+      key: "3",
+      label: <Link to="/send">Send</Link>,
+      icon: <SendOutlined />,
+    },
+    {
+      key: "4",
+      label: <Link to="/swap">Swap</Link>,
+      icon: <SwapOutlined />,
+    },
+    {
+      key: "5",
+      label: <Link to="/transactions">Transactions</Link>,
+      icon: <HistoryOutlined />,
     },
   ];
 
-  useEffect(() => {
-    switch (pageSegments[0]) {
-      case "send": {
-        setSelectedKey(0);
-        break;
-      }
-      case "transactions": {
-        setSelectedKey(1);
-        break;
-      }
-      default: {
-        setSelectedKey(0);
-        break;
-      }
-    }
-  }, [pageSegments]);
+  const showDrawer = () => {
+    setDrawerVisible(true);
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (contentRef.current) {
-        const contentTop = contentRef.current.offsetTop;
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        setIsSticky(scrollTop > contentTop);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const closeDrawer = () => {
+    setDrawerVisible(false);
+  };
 
   return (
-    <>
-      <Affix offsetTop={0}>
-        <Header style={{ display: "flex", alignItems: "center" }}>
-          <Flex
-            justify={"space-between"}
-            align={"center"}
-            style={{ width: "100%" }}
-            vertical={false}
-          >
-            <Flex
-              justify={"flex-end"}
-              align={"center"}
-              gap={10}
-              style={{ width: "100%" }}
-            >
-              <img
-                alt=""
-                src="/logo.png"
-                style={{ width: 32, margin: 8 }}
-                className="demo-logo"
-              />
-              {/* Removed Menu from header */}
-            </Flex>
-            <SolanaConnectionButton />
-          </Flex>
-        </Header>
-      </Affix>
-
-      {/* Sticky tabs container */}
-      <div
-        ref={contentRef}
-        className={`tabs-container ${isSticky ? "sticky" : ""}`}
+    <Affix offsetTop={0}>
+      <Header
         style={{
-          position: isSticky ? "fixed" : "static",
-          top: isSticky ? "64px" : "0", // 64px is default Ant Design header height
-          width: "100%",
-          zIndex: 1000,
-          backgroundColor: "#fff",
-          boxShadow: isSticky ? "0 2px 8px rgba(0,0,0,0.15)" : "none",
-          transition: "all 0.3s ease",
+          display: "flex",
+          alignItems: "center",
+          background: "#fff",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          padding: "0 24px",
+          height: "64px",
         }}
       >
-        <Menu
-          theme="light"
-          mode="horizontal"
-          selectedKeys={[`${selectedKey}`]}
-          items={items}
-          style={{
-            flex: 1,
-            minWidth: 50,
-            justifyContent: "center",
-            borderBottom: "none",
-          }}
-        />
-      </div>
+        {/* Logo on the left */}
+        <div style={{ flex: "0 0 auto" }}>
+          <img alt="Logo" src="/logo.png" style={{ width: 32, height: 32 }} />
+        </div>
 
-      {/* Page content with some spacing when tabs are sticky */}
-      <div style={{ paddingTop: isSticky ? "56px" : "0" }}>
-        {/* Your page content goes here */}
-      </div>
-    </>
+        {/* Centered menu - hidden on small screens */}
+        {windowWidth > 1160 && (
+          <div
+            style={{
+              flex: "1 1 auto",
+              display: "flex",
+              justifyContent: "center",
+              margin: "0 24px",
+            }}
+          >
+            <Menu
+              theme="light"
+              mode="horizontal"
+              selectedKeys={[selectedKey]}
+              items={menuItems}
+              style={{
+                border: "none",
+                background: "transparent",
+                flex: "0 1 auto",
+              }}
+            />
+          </div>
+        )}
+
+        {/* Connect button on the right */}
+        <div style={{ flex: "0 0 auto", marginLeft: "auto" }}>
+          <SolanaConnectionButton />
+        </div>
+
+        {/* Mobile menu button - only visible on small screens */}
+        {windowWidth <= 1160 && (
+          <div style={{ marginLeft: "16px" }}>
+            <Button type="text" icon={<MenuOutlined />} onClick={showDrawer} />
+          </div>
+        )}
+
+        {/* Mobile drawer menu */}
+        <Drawer
+          title="Navigation"
+          placement="right"
+          onClose={closeDrawer}
+          open={drawerVisible}
+          bodyStyle={{ padding: 0 }}
+        >
+          <Menu
+            mode="vertical"
+            selectedKeys={[selectedKey]}
+            items={menuItems}
+            style={{ border: "none" }}
+          />
+        </Drawer>
+      </Header>
+    </Affix>
   );
 };
 

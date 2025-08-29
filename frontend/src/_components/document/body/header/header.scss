@@ -91,21 +91,110 @@
   border-bottom: 2px solid #000000 !important;
 }
 
+.ant-menu-horizontal {
+  border-bottom: none !important;
 
-.tabs-container {
-  transition: all 0.3s ease;
-  
-  &.sticky {
-    position: fixed;
-    top: 64px; /* Default Ant Design header height */
-    width: 100%;
-    z-index: 1000;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  .ant-menu-item {
+    border-bottom: 2px solid transparent;
+    margin: 0 12px;
+    padding: 0 8px;
+
+    &:hover {
+      border-bottom: 2px solid #1890ff;
+      color: #1890ff;
+    }
+
+    a {
+      color: inherit;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+  }
+
+  .ant-menu-item-selected {
+    border-bottom: 2px solid #1890ff;
+    color: #1890ff;
+
+    a {
+      color: #1890ff;
+    }
   }
 }
 
-/* Add smooth transition for the content adjustment */
-.page-content {
-  transition: padding-top 0.3s ease;
+.ant-affix {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .ant-layout-header {
+    background: #fff;
+  }
+}
+
+// Center the menu items in the navigation
+.ant-menu-horizontal {
+  border-bottom: none !important;
+  display: flex;
+  justify-content: center;
+
+  .ant-menu-item {
+    border-bottom: 2px solid transparent;
+    margin: 0 4px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      border-bottom: 2px solid #1890ff;
+      color: #1890ff;
+    }
+
+    a {
+      color: inherit;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+  }
+
+  .ant-menu-item-selected {
+    border-bottom: 2px solid #1890ff;
+    color: #1890ff;
+
+    a {
+      color: #1890ff;
+    }
+  }
+}
+
+// Header styles
+.ant-affix {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .ant-layout-header {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1160px) {
+  .ant-menu-horizontal {
+    display: none;
+  }
+
+  .ant-layout-header {
+    padding: 0 16px !important;
+  }
+}
+
+@media (min-width: 1160px) {
+  .mobile-menu-button {
+    display: none;
+  }
 }
