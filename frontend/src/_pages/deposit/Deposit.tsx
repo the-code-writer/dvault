@@ -6,7 +6,7 @@ import {
   RecipientWalletAddress,
   TotalFees,
   UnlockCriteria,
-} from "../../_components/send";
+} from "../../_components/deposit";
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, clusterApiUrl } from "@solana/web3.js";
@@ -18,13 +18,14 @@ import {
 import { BiSolidCog } from "react-icons/bi";
 import { useOTCTradesSolanaData } from "../../_services/providers/data/context/OTCTradesSolanaDataContext";
 
-import "./send.scss";
+import "./deposit.scss";
 import { AxiosAPI, MD5 } from "../../_helpers";
 import { Fade } from "react-awesome-reveal";
+import TextArea from "antd/es/input/TextArea";
 
 const { Content } = Layout;
 
-const Send: React.FC = () => {
+const Deposit: React.FC = () => {
   const { Title, Text } = Typography;
 
   const [pageTitle, setPageTitle] = useState<string>("");
@@ -286,7 +287,7 @@ const Send: React.FC = () => {
               <Col span={24}>
                 <Flex justify={"center"} align={"flex-start"} gap={0} vertical>
                   <Title className="txn-main-title " level={2}>
-                    Send Privately
+                    Deposit Funds
                   </Title>
                   <Text className="txn-description">
                     Set access criteria to send and unlock funds privately
@@ -303,34 +304,17 @@ const Send: React.FC = () => {
               </Col>
             </Row>
           </Fade>
-          {/* UnlockCriteria */}
-          <Fade delay={4 * 125}>
-            <Row>
-              <Col span={24}>
-                <UnlockCriteria
-                  onUnlockCriteriaFormData={onUnlockCriteriaFormDataHandler}
-                />
-              </Col>
-            </Row>
-          </Fade>
           {/* Recipient Wallet Address */}
-          <Fade delay={5 * 125}>
-            <Row>
-              <Col span={24}>
-                <RecipientWalletAddress
-                  onRecipientWalletAddress={onRecipientWalletAddressHandler}
-                />
-              </Col>
-            </Row>
-          </Fade>
-          {/* Total Fees */}
-          <Fade delay={6 * 125}>
-            <Row>
-              <Col span={24}>
-                <TotalFees
-                  onTotalFees={onTotalFeesHandler}
-                  amountsInValue={amountsInValue.selectedAmount}
-                />
+          <Fade delay={2 * 125}>
+            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+              <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                <TextArea rows={8}
+                  className="txn-unlock-criteria-form-input"
+                  size="large"
+                  placeholder="Enter details..."
+                  value={""}
+                  onChange={(e) => { }}
+                ></TextArea>
               </Col>
             </Row>
           </Fade>
@@ -348,7 +332,7 @@ const Send: React.FC = () => {
                     saveTransaction();
                   }}
                 >
-                  Send
+                  Deposit Funds
                 </Button>
               </Col>
             </Row>
@@ -359,4 +343,4 @@ const Send: React.FC = () => {
   );
 };
 
-export { Send };
+export { Deposit };

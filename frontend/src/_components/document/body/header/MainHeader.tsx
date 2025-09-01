@@ -11,7 +11,8 @@ import {
   SwapOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
-
+import "./header.scss";
+import logoLong from "../../../../assets/logo-long.png";
 const { Header } = Layout;
 
 const MainHeader = () => {
@@ -57,32 +58,32 @@ const MainHeader = () => {
     {
       key: "0",
       label: <Link to="/dashboard">Dashboard</Link>,
-      icon: <DashboardOutlined />,
+      //icon: <DashboardOutlined />,
     },
     {
       key: "1",
       label: <Link to="/deposit">Deposit</Link>,
-      icon: <CreditCardOutlined />,
+      //icon: <CreditCardOutlined />,
     },
     {
       key: "2",
       label: <Link to="/withdraw">Withdraw</Link>,
-      icon: <DownloadOutlined />,
+      //icon: <DownloadOutlined />,
     },
     {
       key: "3",
       label: <Link to="/send">Send</Link>,
-      icon: <SendOutlined />,
+      //icon: <SendOutlined />,
     },
     {
       key: "4",
       label: <Link to="/swap">Swap</Link>,
-      icon: <SwapOutlined />,
+      //icon: <SwapOutlined />,
     },
     {
       key: "5",
       label: <Link to="/transactions">Transactions</Link>,
-      icon: <HistoryOutlined />,
+      //icon: <HistoryOutlined />,
     },
   ];
 
@@ -107,8 +108,8 @@ const MainHeader = () => {
         }}
       >
         {/* Logo on the left */}
-        <div style={{ flex: "0 0 auto" }}>
-          <img alt="Logo" src="/logo.png" style={{ width: 32, height: 32 }} />
+        <div className="logo-wrapper">
+          <img alt="Logo" src={logoLong} />
         </div>
 
         {/* Centered menu - hidden on small screens */}

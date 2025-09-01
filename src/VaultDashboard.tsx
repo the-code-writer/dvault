@@ -80,7 +80,7 @@ const VaultDashboard: React.FC = () => {
   };
   const { address, caipAddress, isConnected, status, embeddedWalletInfo } = useAppKitAccount(); 
 
-  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>({});
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [emergencyPassword, setEmergencyPassword] = useState<string>('');

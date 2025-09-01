@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Flex, Layout, Row, Space, Typography } from "antd";
+import { Alert, Button, Checkbox, CheckboxProps, Col, Flex, Input, Layout, Row, Space, Typography } from "antd";
 import { Page } from "../../_components/document";
 import {
   AmountsIn,
   RecipientWalletAddress,
   TotalFees,
   UnlockCriteria,
-} from "../../_components/send";
+  WithdrawalLimits,
+} from "../../_components/deposit";
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, clusterApiUrl } from "@solana/web3.js";
@@ -18,13 +19,15 @@ import {
 import { BiSolidCog } from "react-icons/bi";
 import { useOTCTradesSolanaData } from "../../_services/providers/data/context/OTCTradesSolanaDataContext";
 
-import "./send.scss";
+import "./withdraw.scss";
 import { AxiosAPI, MD5 } from "../../_helpers";
 import { Fade } from "react-awesome-reveal";
+import TextArea from "antd/es/input/TextArea";
+import { type } from '../../_components/deposit/LimitsTypes';
 
 const { Content } = Layout;
 
-const Send: React.FC = () => {
+const Withdraw: React.FC = () => {
   const { Title, Text } = Typography;
 
   const [pageTitle, setPageTitle] = useState<string>("");
@@ -232,6 +235,12 @@ const Send: React.FC = () => {
       });
   };
 
+  const [isEmergency, setIsEmergency] = useState(false);
+
+  const onChange: CheckboxProps["onChange"] = (e) => {
+    setIsEmergency(e.target.checked);
+  };
+
   return (
     <Page
       pageTitle={pageTitle}
@@ -286,7 +295,7 @@ const Send: React.FC = () => {
               <Col span={24}>
                 <Flex justify={"center"} align={"flex-start"} gap={0} vertical>
                   <Title className="txn-main-title " level={2}>
-                    Send Privately
+                    Withdraw Funds
                   </Title>
                   <Text className="txn-description">
                     Set access criteria to send and unlock funds privately
@@ -303,37 +312,61 @@ const Send: React.FC = () => {
               </Col>
             </Row>
           </Fade>
-          {/* UnlockCriteria */}
+          {/* AmountsIn */}
           <Fade delay={4 * 125}>
             <Row>
               <Col span={24}>
-                <UnlockCriteria
-                  onUnlockCriteriaFormData={onUnlockCriteriaFormDataHandler}
+                <WithdrawalLimits
+                  withdrawalLimit={3424}
+                  monthlyLimit={5}
+                  availableMonthly={2}
                 />
               </Col>
             </Row>
           </Fade>
-          {/* Recipient Wallet Address */}
+          {/* AmountsIn */}
           <Fade delay={5 * 125}>
             <Row>
               <Col span={24}>
-                <RecipientWalletAddress
-                  onRecipientWalletAddress={onRecipientWalletAddressHandler}
-                />
+                <Checkbox onChange={onChange}>
+                  Is Emergency withdrawal?
+                </Checkbox>
               </Col>
             </Row>
           </Fade>
-          {/* Total Fees */}
-          <Fade delay={6 * 125}>
-            <Row>
-              <Col span={24}>
-                <TotalFees
-                  onTotalFees={onTotalFeesHandler}
-                  amountsInValue={amountsInValue.selectedAmount}
-                />
-              </Col>
-            </Row>
-          </Fade>
+          {isEmergency && (
+            <>
+              {/* AmountsIn */}
+              <Fade delay={1 * 125}>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                  <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <Alert
+                      message={<strong>Warning</strong>}
+                      description="Emergency withdrawals require a password from your trusted partner and have a 30-day cooldown period."
+                      type="warning"
+                      showIcon
+                      closable
+                    />
+                  </Col>
+                </Row>
+              </Fade>
+              {/* Recipient Wallet Address */}
+              <Fade delay={1 * 125}>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                  <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <Input
+                      type={"password"}
+                      className="txn-unlock-criteria-form-input"
+                      size="large"
+                      placeholder="Enter emergency password from the trusted partner..."
+                      value={""}
+                      onChange={(e) => {}}
+                    />
+                  </Col>
+                </Row>
+              </Fade>
+            </>
+          )}
           {/* Send Transaction Button */}
           <Fade delay={7 * 125}>
             <Row>
@@ -348,7 +381,7 @@ const Send: React.FC = () => {
                     saveTransaction();
                   }}
                 >
-                  Send
+                  Deposit Funds
                 </Button>
               </Col>
             </Row>
@@ -359,4 +392,4 @@ const Send: React.FC = () => {
   );
 };
 
-export { Send };
+export { Withdraw };
