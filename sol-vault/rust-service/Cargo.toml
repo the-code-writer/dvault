@@ -1,0 +1,18 @@
+[package]
+name = "rust-service"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+solana-sdk="3.0.0"
+solana-client="3.0.1"
+spl-token="8.0.0"
+solana-account-decoder="3.0.1"
+solana-program="3.0.0"
+tokio = {version = "1.14.1", features=["full"]}
+vault = {path = "../programs/vault", features = ["no-entrypoint"] }
+spl-associated-token-account = "7.0.0"
+anchor-lang = "0.31.1"
+shellexpand = "3.1.1"
